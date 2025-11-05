@@ -43,7 +43,15 @@ class NotesManager:
     
     def get_note(self, note_id):
         """Retrieve a note by ID."""
+        # Validate note_id to prevent path traversal attacks
+        if not note_id or '..' in note_id or '/' in note_id or '\\' in note_id:
+            return None
+        
         filename = os.path.join(self.notes_dir, f"{note_id}.json")
+        
+        # Ensure the resolved path is still within notes_dir
+        if not os.path.abspath(filename).startswith(os.path.abspath(self.notes_dir)):
+            return None
         
         if not os.path.exists(filename):
             return None
@@ -83,6 +91,10 @@ class NotesManager:
     
     def update_note(self, note_id, title=None, content=None, tags=None, category=None):
         """Update an existing note."""
+        # Validate note_id to prevent path traversal attacks
+        if not note_id or '..' in note_id or '/' in note_id or '\\' in note_id:
+            raise ValueError(f"Invalid note ID")
+        
         note = self.get_note(note_id)
         
         if not note:
@@ -101,6 +113,10 @@ class NotesManager:
         
         filename = os.path.join(self.notes_dir, f"{note_id}.json")
         
+        # Ensure the resolved path is still within notes_dir
+        if not os.path.abspath(filename).startswith(os.path.abspath(self.notes_dir)):
+            raise ValueError(f"Invalid note ID")
+        
         try:
             with open(filename, 'w') as f:
                 json.dump(note, f, indent=2)
@@ -110,7 +126,15 @@ class NotesManager:
     
     def delete_note(self, note_id):
         """Delete a note by ID."""
+        # Validate note_id to prevent path traversal attacks
+        if not note_id or '..' in note_id or '/' in note_id or '\\' in note_id:
+            raise ValueError(f"Invalid note ID")
+        
         filename = os.path.join(self.notes_dir, f"{note_id}.json")
+        
+        # Ensure the resolved path is still within notes_dir
+        if not os.path.abspath(filename).startswith(os.path.abspath(self.notes_dir)):
+            raise ValueError(f"Invalid note ID")
         
         if not os.path.exists(filename):
             raise ValueError(f"Note with ID {note_id} not found")

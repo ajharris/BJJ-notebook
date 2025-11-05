@@ -69,8 +69,10 @@ def api_chat():
             'success': True
         })
     except Exception as e:
+        # Log the full error for debugging but return generic message to user
+        app.logger.error(f"Chat error: {str(e)}")
         return jsonify({
-            'error': str(e),
+            'error': 'An error occurred while processing your request',
             'success': False
         }), 500
 
@@ -104,8 +106,10 @@ def save_conversation():
             'note_id': note_id
         })
     except Exception as e:
+        # Log the full error for debugging but return generic message to user
+        app.logger.error(f"Save conversation error: {str(e)}")
         return jsonify({
-            'error': str(e),
+            'error': 'Failed to save conversation',
             'success': False
         }), 500
 
@@ -165,9 +169,17 @@ def create_note():
             'success': True,
             'note_id': note_id
         })
-    except Exception as e:
+    except ValueError as e:
+        # For validation errors, return the specific message
         return jsonify({
             'error': str(e),
+            'success': False
+        }), 400
+    except Exception as e:
+        # Log the full error for debugging but return generic message to user
+        app.logger.error(f"Create note error: {str(e)}")
+        return jsonify({
+            'error': 'Failed to create note',
             'success': False
         }), 500
 
@@ -177,9 +189,17 @@ def delete_note(note_id):
     try:
         notes_manager.delete_note(note_id)
         return jsonify({'success': True})
-    except Exception as e:
+    except ValueError as e:
+        # For validation errors, return the specific message
         return jsonify({
             'error': str(e),
+            'success': False
+        }), 404
+    except Exception as e:
+        # Log the full error for debugging but return generic message to user
+        app.logger.error(f"Delete note error: {str(e)}")
+        return jsonify({
+            'error': 'Failed to delete note',
             'success': False
         }), 500
 
@@ -209,8 +229,10 @@ def search_notes_api():
             'results': results
         })
     except Exception as e:
+        # Log the full error for debugging but return generic message to user
+        app.logger.error(f"Search notes error: {str(e)}")
         return jsonify({
-            'error': str(e),
+            'error': 'Failed to search notes',
             'success': False
         }), 500
 
