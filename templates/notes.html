@@ -44,7 +44,7 @@
 <div class="notes-list" id="notesList">
     {% if notes %}
         {% for note in notes %}
-        <div class="note-card" data-note-title="{{ note.title|lower }}" data-note-tags="{{ note.tags|join(',')|lower }}" data-note-category="{{ note.category|lower }}">
+        <div class="note-card" data-note-title="{{ note.title|lower|e }}" data-note-tags="{{ note.tags|join(',')|lower|e }}" data-note-category="{{ note.category|lower|e }}">
             <div class="note-header">
                 <h3>{{ note.title }}</h3>
                 <div class="note-actions">

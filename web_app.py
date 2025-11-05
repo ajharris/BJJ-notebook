@@ -18,17 +18,8 @@ app.secret_key = os.urandom(24)  # For session management
 # Initialize managers
 notes_manager = NotesManager()
 
-def get_chat_handler():
-    """Get or create chat handler for the session."""
-    if 'chat_initialized' not in session:
-        try:
-            session['chat_handler'] = True
-            session['chat_initialized'] = True
-            return BJJChatHandler()
-        except Exception as e:
-            session['chat_error'] = str(e)
-            return None
-    return BJJChatHandler()
+# Chat handlers are not stored in session since they cannot be serialized
+# Each request creates a new handler which is fine for stateless API calls
 
 @app.route('/')
 def index():
@@ -58,6 +49,9 @@ def api_chat():
         return jsonify({'error': 'Message cannot be empty'}), 400
     
     try:
+        # Create a new chat handler for this request
+        # Note: This doesn't preserve conversation history between requests
+        # For production, consider using a database or Redis to store conversation state
         chat_handler = BJJChatHandler()
         response = chat_handler.chat(user_message)
         
@@ -232,7 +226,10 @@ def main():
     print("🌐 Open your browser and navigate to: http://localhost:5000\n")
     
     # Run the Flask app
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Note: debug=True should only be used in development
+    # For production, use a proper WSGI server like gunicorn
+    debug_mode = os.getenv('FLASK_DEBUG', 'True').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
 
 if __name__ == "__main__":
     main()
