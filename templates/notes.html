@@ -24,6 +24,14 @@
         <textarea id="noteContent" class="form-control" rows="8" placeholder="Enter note content"></textarea>
     </div>
     <div class="form-group">
+        <label for="noteCategory">Category:</label>
+        <select id="noteCategory" class="form-control">
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat|title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
         <label for="noteTags">Tags (comma-separated):</label>
         <input type="text" id="noteTags" class="form-control" placeholder="e.g., guard, sweep, training">
     </div>
@@ -36,7 +44,7 @@
 <div class="notes-list" id="notesList">
     {% if notes %}
         {% for note in notes %}
-        <div class="note-card" data-note-title="{{ note.title|lower }}" data-note-tags="{{ note.tags|join(',')|lower }}">
+        <div class="note-card" data-note-title="{{ note.title|lower }}" data-note-tags="{{ note.tags|join(',')|lower }}" data-note-category="{{ note.category|lower }}">
             <div class="note-header">
                 <h3>{{ note.title }}</h3>
                 <div class="note-actions">
@@ -46,6 +54,7 @@
             </div>
             <div class="note-meta">
                 <span class="note-date">📅 {{ note.created_at[:10] }}</span>
+                <span class="note-category">📂 {{ note.category|title }}</span>
                 {% if note.tags %}
                 <div class="note-tags">
                     {% for tag in note.tags %}
@@ -82,6 +91,7 @@ async function createNote() {
     const title = document.getElementById('noteTitle').value.trim();
     const content = document.getElementById('noteContent').value.trim();
     const tags = document.getElementById('noteTags').value.trim();
+    const category = document.getElementById('noteCategory').value;
     
     if (!title || !content) {
         alert('Title and content are required');
@@ -94,7 +104,7 @@ async function createNote() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ title, content, tags })
+            body: JSON.stringify({ title, content, tags, category })
         });
         
         const data = await response.json();
@@ -139,7 +149,8 @@ function searchNotes() {
     noteCards.forEach(card => {
         const title = card.getAttribute('data-note-title');
         const tags = card.getAttribute('data-note-tags');
-        const searchText = title + ' ' + tags;
+        const category = card.getAttribute('data-note-category');
+        const searchText = title + ' ' + tags + ' ' + category;
         
         if (searchText.includes(searchTerm)) {
             card.style.display = 'block';

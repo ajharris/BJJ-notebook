@@ -14,6 +14,7 @@
     <div class="note-metadata">
         <p><strong>Created:</strong> {{ note.created_at }}</p>
         <p><strong>Updated:</strong> {{ note.updated_at }}</p>
+        <p><strong>Category:</strong> <span class="category-badge">{{ note.category|default('general')|title }}</span></p>
         {% if note.tags %}
         <div class="note-tags">
             <strong>Tags:</strong>
@@ -30,5 +31,29 @@
             {{ note.content|replace('\n', '<br>')|safe }}
         </div>
     </div>
+    
+    {% if related_notes %}
+    <div class="related-notes">
+        <h3>Related Notes</h3>
+        <p class="related-notes-desc">Notes with similar topics or in the same category</p>
+        <div class="related-notes-list">
+            {% for related in related_notes %}
+            <div class="related-note-item">
+                <a href="{{ url_for('view_note', note_id=related.id) }}" class="related-note-link">
+                    <strong>{{ related.title }}</strong>
+                </a>
+                <div class="related-info">
+                    <span class="related-category">📂 {{ related.category|title }}</span>
+                    {% if related.common_tags %}
+                    <span class="related-tags">
+                        🏷️ Common tags: {{ related.common_tags|join(', ') }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

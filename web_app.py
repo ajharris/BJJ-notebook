@@ -131,7 +131,13 @@ def reference():
 def notes():
     """Notes management page."""
     all_notes = notes_manager.list_notes()
-    return render_template('notes.html', notes=all_notes)
+    categories = notes_manager.get_all_categories()
+    
+    # Add default categories if no notes exist
+    default_categories = ["general", "technique", "training", "competition", "concept", "chat"]
+    all_categories = sorted(list(set(categories + default_categories)))
+    
+    return render_template('notes.html', notes=all_notes, categories=all_categories)
 
 @app.route('/notes/view/<note_id>')
 def view_note(note_id):
@@ -139,7 +145,11 @@ def view_note(note_id):
     note = notes_manager.get_note(note_id)
     if not note:
         return "Note not found", 404
-    return render_template('view_note.html', note=note)
+    
+    # Get related notes
+    related_notes = notes_manager.get_related_notes(note_id)
+    
+    return render_template('view_note.html', note=note, related_notes=related_notes)
 
 @app.route('/api/notes', methods=['POST'])
 def create_note():
@@ -148,6 +158,7 @@ def create_note():
     title = data.get('title', '').strip()
     content = data.get('content', '').strip()
     tags_str = data.get('tags', '').strip()
+    category = data.get('category', 'general').strip()
     
     if not title or not content:
         return jsonify({'error': 'Title and content are required'}), 400
@@ -155,7 +166,7 @@ def create_note():
     tags = [tag.strip() for tag in tags_str.split(',')] if tags_str else []
     
     try:
-        note_id = notes_manager.save_note(title, content, tags)
+        note_id = notes_manager.save_note(title, content, tags, category)
         return jsonify({
             'success': True,
             'note_id': note_id
