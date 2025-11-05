@@ -122,6 +122,9 @@ class NotesManager:
         results = []
         query_lower = query.lower()
         
+        if not os.path.exists(self.notes_dir):
+            return results
+        
         for filename in os.listdir(self.notes_dir):
             if filename.endswith('.json'):
                 filepath = os.path.join(self.notes_dir, filename)
