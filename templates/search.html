@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}BJJ Notebook - Search{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🔍 Search Techniques</h1>
+    <p>Find BJJ techniques across all categories</p>
+</div>
+
+<div class="search-form">
+    <form method="GET" action="{{ url_for('search') }}">
+        <div class="search-group">
+            <input type="text" name="q" class="search-input-large" placeholder="Search for techniques..." value="{{ query }}" autofocus>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+</div>
+
+{% if query %}
+<div class="search-results">
+    <h2>Search Results for "{{ query }}"</h2>
+    
+    {% if results %}
+        <p class="results-count">Found {{ results|length }} technique(s)</p>
+        
+        <div class="results-list">
+            {% for tech in results %}
+            <div class="result-card">
+                <h3>{{ tech.name }}</h3>
+                <div class="result-details">
+                    <span class="badge badge-category">{{ tech.category }}</span>
+                    {% if tech.sub_category %}
+                    <span class="badge badge-subcategory">{{ tech.sub_category }}</span>
+                    {% endif %}
+                    {% if tech.position %}
+                    <span class="result-info">From: {{ tech.position }}</span>
+                    {% endif %}
+                    {% if tech.type and tech.category != 'submissions' %}
+                    <span class="result-info">Type: {{ tech.type }}</span>
+                    {% endif %}
+                    {% if tech.target %}
+                    <span class="result-info">Targets: {{ tech.target }}</span>
+                    {% endif %}
+                    {% if tech.from_position %}
+                    <span class="result-info">From: {{ tech.from_position }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No techniques found matching "{{ query }}"</p>
+            <p>Try searching for:</p>
+            <ul>
+                <li>Position names (e.g., "guard", "mount")</li>
+                <li>Technique types (e.g., "armbar", "sweep", "pass")</li>
+                <li>General terms (e.g., "choke", "escape")</li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="search-suggestions">
+    <h3>Search Examples:</h3>
+    <div class="suggestion-grid">
+        <a href="{{ url_for('search', q='armbar') }}" class="suggestion-card">
+            <span class="suggestion-icon">🔒</span>
+            <span class="suggestion-text">Armbar</span>
+        </a>
+        <a href="{{ url_for('search', q='sweep') }}" class="suggestion-card">
+            <span class="suggestion-icon">🔄</span>
+            <span class="suggestion-text">Sweep</span>
+        </a>
+        <a href="{{ url_for('search', q='pass') }}" class="suggestion-card">
+            <span class="suggestion-icon">⚡</span>
+            <span class="suggestion-text">Pass</span>
+        </a>
+        <a href="{{ url_for('search', q='escape') }}" class="suggestion-card">
+            <span class="suggestion-icon">🚪</span>
+            <span class="suggestion-text">Escape</span>
+        </a>
+        <a href="{{ url_for('search', q='choke') }}" class="suggestion-card">
+            <span class="suggestion-icon">🔒</span>
+            <span class="suggestion-text">Choke</span>
+        </a>
+        <a href="{{ url_for('search', q='guard') }}" class="suggestion-card">
+            <span class="suggestion-icon">🥋</span>
+            <span class="suggestion-text">Guard</span>
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

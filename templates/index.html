@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}BJJ Notebook - Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>🥋 Welcome to BJJ Notebook</h1>
+    <p class="subtitle">Your Brazilian Jiu-Jitsu Learning Assistant</p>
+</div>
+
+<div class="features-grid">
+    <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI-Powered Chat</h3>
+        <p>Get personalized BJJ guidance and answers to your technique questions from an OpenAI-powered assistant.</p>
+        <a href="{{ url_for('chat') }}" class="btn btn-primary">Start Chatting</a>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>BJJ Reference</h3>
+        <p>Browse comprehensive information about positions, techniques, submissions, sweeps, passes, and escapes.</p>
+        <a href="{{ url_for('reference') }}" class="btn btn-primary">Browse Reference</a>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Training Notes</h3>
+        <p>Create, manage, and search your personal BJJ training notes to track your learning progress.</p>
+        <a href="{{ url_for('notes') }}" class="btn btn-primary">Manage Notes</a>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Technique Search</h3>
+        <p>Quickly find specific BJJ techniques across all categories with our powerful search feature.</p>
+        <a href="{{ url_for('search') }}" class="btn btn-primary">Search Techniques</a>
+    </div>
+</div>
+
+<div class="info-section">
+    <h2>About BJJ Notebook</h2>
+    <p>BJJ Notebook is your comprehensive Brazilian Jiu-Jitsu learning companion. Whether you're a beginner or an experienced practitioner, this application provides:</p>
+    <ul>
+        <li>AI-powered chat assistant for technique guidance</li>
+        <li>Detailed reference database of positions and techniques</li>
+        <li>Personal note-taking system for training insights</li>
+        <li>Quick search across all BJJ techniques</li>
+    </ul>
+    <p class="safety-note">⚠️ <strong>Safety Note:</strong> BJJ should be practiced under the supervision of qualified instructors. This application is for educational reference only.</p>
+</div>
+{% endblock %}
