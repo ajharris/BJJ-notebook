@@ -235,11 +235,14 @@ class BJJNotebook:
             print("✗ Content cannot be empty")
             return
         
+        category_input = input("Category (general/technique/training/competition/concept): ").strip()
+        category = category_input if category_input else "general"
+        
         tags_input = input("Tags (comma-separated, optional): ").strip()
         tags = [tag.strip() for tag in tags_input.split(',')] if tags_input else []
         
         try:
-            note_id = self.notes_manager.save_note(title, content, tags)
+            note_id = self.notes_manager.save_note(title, content, tags, category)
             print(f"✓ Note saved successfully! ID: {note_id}")
         except Exception as e:
             print(f"✗ Error saving note: {e}")
@@ -256,8 +259,9 @@ class BJJNotebook:
         print("-" * 60)
         
         for note in notes:
+            category_str = f" 📂 {note.get('category', 'general')}"
             tags_str = f" [{', '.join(note['tags'])}]" if note['tags'] else ""
-            print(f"  • {note['title']}{tags_str}")
+            print(f"  • {note['title']}{category_str}{tags_str}")
             print(f"    ID: {note['id']}")
             print(f"    Created: {note['created_at'][:10]}")
             print()
@@ -276,11 +280,22 @@ class BJJNotebook:
             print("-" * 60)
             print(f"Created: {note['created_at']}")
             print(f"Updated: {note['updated_at']}")
+            print(f"Category: {note.get('category', 'general')}")
             if note.get('tags'):
                 print(f"Tags: {', '.join(note['tags'])}")
             print("\nContent:")
             print(note['content'])
             print("-" * 60)
+            
+            # Show related notes
+            related_notes = self.notes_manager.get_related_notes(note_id)
+            if related_notes:
+                print("\n🔗 Related Notes:")
+                for related in related_notes[:5]:  # Show up to 5 related notes
+                    print(f"  • {related['title']} (Category: {related['category']})")
+                    if related.get('common_tags'):
+                        print(f"    Common tags: {', '.join(related['common_tags'])}")
+                print()
             
         except Exception as e:
             print(f"✗ Error viewing note: {e}")

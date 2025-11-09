@@ -36,7 +36,26 @@ A Brazilian Jiu-Jitsu workbook and reference application with OpenAI-powered cha
 
 ## Usage
 
-Run the application:
+### Web Application (Recommended)
+
+Run the web application:
+```bash
+python web_app.py
+```
+
+Then open your browser and navigate to: http://localhost:5000
+
+The web interface provides:
+- Modern, user-friendly interface
+- AI-powered chat with BJJ assistant
+- Comprehensive BJJ reference browser
+- Notes management with categories and related notes linking
+- Quick technique search
+- All features from the CLI in an easy-to-use web interface
+
+### Command Line Interface
+
+Run the CLI application:
 ```bash
 python bjj_notebook.py
 ```
@@ -64,9 +83,11 @@ Example questions:
   - Escapes
 
 #### 3. Manage Notes
-- Create training notes with titles, content, and tags
+- Create training notes with titles, content, tags, and categories
+- Organize notes by category (technique, training, competition, concept, etc.)
 - List all saved notes
 - View specific notes by ID
+- Discover related notes based on category and tags
 - Search notes by keywords
 - Delete old notes
 
@@ -79,12 +100,24 @@ Example questions:
 
 ```
 BJJ-notebook/
-├── bjj_notebook.py          # Main CLI application
+├── web_app.py               # Flask web application
+├── bjj_notebook.py          # CLI application
 ├── src/
 │   ├── __init__.py          # Package initialization
 │   ├── chat_handler.py      # OpenAI chat integration
-│   ├── notes_manager.py     # Note-taking system
+│   ├── notes_manager.py     # Note-taking system with categories
 │   └── bjj_reference.py     # BJJ reference data
+├── templates/               # HTML templates for web interface
+│   ├── base.html           # Base template with navigation
+│   ├── index.html          # Home page
+│   ├── chat.html           # Chat interface
+│   ├── reference.html      # BJJ reference browser
+│   ├── notes.html          # Notes management
+│   ├── view_note.html      # Individual note view with related notes
+│   └── search.html         # Technique search
+├── static/
+│   └── css/
+│       └── style.css       # Styling for web interface
 ├── notes/                   # Saved notes (created on first use)
 ├── .env.example             # Example environment variables
 ├── .gitignore              # Git ignore rules
@@ -110,8 +143,10 @@ The application uses environment variables for configuration:
 Notes are stored as JSON files in the `notes/` directory. Each note contains:
 - Unique ID with timestamp
 - Title and content
+- Category (technique, training, competition, concept, general, chat)
 - Tags for organization
 - Creation and update timestamps
+- Automatic linking to related notes based on category and tags
 
 ## Safety Note
 
@@ -129,10 +164,31 @@ Contributions are welcome! Feel free to:
 
 This project is open source and available for educational purposes.
 
+## Features Highlights
+
+### Web Interface
+The web application provides a modern, responsive interface with:
+- **Category Organization**: Organize notes by technique, training, competition, concept, or custom categories
+- **Related Notes Linking**: Automatically discover related notes based on shared categories and tags
+- **Responsive Design**: Works on desktop and mobile browsers
+- **Clean UI**: Modern, card-based layout with intuitive navigation
+
+### Note Categories
+Notes can be organized into categories:
+- **Technique**: For specific BJJ techniques and moves
+- **Training**: For training session notes and observations
+- **Competition**: For competition strategies and experiences
+- **Concept**: For conceptual understanding and principles
+- **General**: For general notes
+- **Chat**: Automatically assigned to saved conversations
+
+Related notes are automatically linked when they share:
+- The same category
+- Common tags
+
 ## Future Enhancements
 
 Potential features to add:
-- Web interface (Flask/Django)
 - Training log with calendar
 - Progress tracking
 - Video reference links

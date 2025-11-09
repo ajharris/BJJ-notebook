@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}BJJ Notebook - Reference{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📚 BJJ Reference</h1>
+    <p>Browse positions, concepts, and techniques</p>
+</div>
+
+<div class="reference-section">
+    <h2>🥋 Positions</h2>
+    <div class="positions-grid">
+        {% for key, position in positions.items() %}
+        <div class="reference-card">
+            <h3>{{ position.name }}</h3>
+            <p class="description">{{ position.description }}</p>
+            <div class="reference-details">
+                <p><strong>Types:</strong></p>
+                <ul>
+                    {% for type in position.types %}
+                    <li>{{ type }}</li>
+                    {% endfor %}
+                </ul>
+                <p><strong>Key Concepts:</strong></p>
+                <ul>
+                    {% for concept in position.key_concepts %}
+                    <li>{{ concept }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="reference-section">
+    <h2>💡 Key BJJ Concepts</h2>
+    <div class="concepts-list">
+        {% for concept in concepts %}
+        <div class="concept-item">
+            <span class="concept-bullet">▸</span>
+            <span>{{ concept }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="reference-section">
+    <h2>🎯 Techniques</h2>
+    
+    <div class="technique-category">
+        <h3>🔒 Submissions</h3>
+        
+        <div class="technique-subsection">
+            <h4>Chokes</h4>
+            <ul class="technique-list">
+                {% for tech in techniques.submissions.chokes %}
+                <li>
+                    <strong>{{ tech.name }}</strong>
+                    <span class="technique-meta">from {{ tech.position }} ({{ tech.type }})</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="technique-subsection">
+            <h4>Armlocks</h4>
+            <ul class="technique-list">
+                {% for tech in techniques.submissions.armlocks %}
+                <li>
+                    <strong>{{ tech.name }}</strong>
+                    <span class="technique-meta">from {{ tech.position }} (targets {{ tech.target }})</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="technique-subsection">
+            <h4>Leglocks</h4>
+            <ul class="technique-list">
+                {% for tech in techniques.submissions.leglocks %}
+                <li>
+                    <strong>{{ tech.name }}</strong>
+                    <span class="technique-meta">(targets {{ tech.target }})</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="technique-category">
+        <h3>🔄 Sweeps</h3>
+        <ul class="technique-list">
+            {% for tech in techniques.sweeps %}
+            <li>
+                <strong>{{ tech.name }}</strong>
+                <span class="technique-meta">from {{ tech.from_position }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="technique-category">
+        <h3>⚡ Passes</h3>
+        <ul class="technique-list">
+            {% for tech in techniques.passes %}
+            <li>
+                <strong>{{ tech.name }}</strong>
+                <span class="technique-meta">({{ tech.type }})</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="technique-category">
+        <h3>🚪 Escapes</h3>
+        <ul class="technique-list">
+            {% for tech in techniques.escapes %}
+            <li>
+                <strong>{{ tech.name }}</strong>
+                <span class="technique-meta">from {{ tech.from_position }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

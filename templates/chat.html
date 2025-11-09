@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}BJJ Notebook - Chat{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>💬 Chat with BJJ Assistant</h1>
+    <p>Ask questions about BJJ techniques, positions, and concepts</p>
+</div>
+
+{% if not chat_available %}
+<div class="alert alert-warning">
+    <strong>⚠️ Chat Unavailable:</strong> {{ error_message }}
+</div>
+{% else %}
+
+<div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+        <div class="system-message">
+            <p><strong>Welcome!</strong> I'm your BJJ assistant. Ask me anything about Brazilian Jiu-Jitsu techniques, positions, or concepts.</p>
+            <p><em>Example questions:</em></p>
+            <ul>
+                <li>"Explain the closed guard position"</li>
+                <li>"How do I escape from mount?"</li>
+                <li>"What are the key concepts for passing guard?"</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="chat-actions">
+        <button type="button" class="btn btn-secondary" onclick="clearChat()">Clear Chat</button>
+        <button type="button" class="btn btn-secondary" onclick="saveConversation()">Save as Note</button>
+    </div>
+
+    <div class="chat-input-container">
+        <textarea id="userMessage" class="chat-input" placeholder="Type your BJJ question here..." rows="3"></textarea>
+        <button type="button" class="btn btn-primary" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let isProcessing = false;
+
+function addMessage(content, type) {
+    const messagesDiv = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${type}-message`;
+    
+    const contentP = document.createElement('p');
+    contentP.textContent = content;
+    messageDiv.appendChild(contentP);
+    
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+async function sendMessage() {
+    if (isProcessing) return;
+    
+    const textarea = document.getElementById('userMessage');
+    const message = textarea.value.trim();
+    
+    if (!message) {
+        alert('Please enter a message');
+        return;
+    }
+    
+    isProcessing = true;
+    
+    // Add user message to chat
+    addMessage(message, 'user');
+    textarea.value = '';
+    
+    // Add loading indicator
+    const messagesDiv = document.getElementById('chatMessages');
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat-message assistant-message loading';
+    loadingDiv.id = 'loading';
+    loadingDiv.innerHTML = '<p>BJJ Assistant is thinking...</p>';
+    messagesDiv.appendChild(loadingDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: message })
+        });
+        
+        const data = await response.json();
+        
+        // Remove loading indicator
+        document.getElementById('loading').remove();
+        
+        if (data.success) {
+            addMessage(data.response, 'assistant');
+        } else {
+            addMessage('Error: ' + data.error, 'error');
+        }
+    } catch (error) {
+        document.getElementById('loading')?.remove();
+        addMessage('Error communicating with server: ' + error.message, 'error');
+    } finally {
+        isProcessing = false;
+    }
+}
+
+async function clearChat() {
+    if (!confirm('Are you sure you want to clear the chat history?')) {
+        return;
+    }
+    
+    try {
+        await fetch('/api/chat/clear', {
+            method: 'POST'
+        });
+        
+        const messagesDiv = document.getElementById('chatMessages');
+        messagesDiv.innerHTML = `
+            <div class="system-message">
+                <p><strong>Chat cleared!</strong> Start a new conversation.</p>
+            </div>
+        `;
+    } catch (error) {
+        alert('Error clearing chat: ' + error.message);
+    }
+}
+
+async function saveConversation() {
+    try {
+        const response = await fetch('/api/chat/save', {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Conversation saved as note: ' + data.note_id);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error saving conversation: ' + error.message);
+    }
+}
+
+// Allow Enter to send (Shift+Enter for new line)
+document.getElementById('userMessage')?.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+</script>
+{% endblock %}
