@@ -194,10 +194,6 @@ See [integrated_bjj_judo_black_belt_curriculum.md](integrated_bjj_judo_black_bel
 
 See [CONVERSATION_SUMMARY.md](CONVERSATION_SUMMARY.md) for the latest high-level notes about coaching themes, strategy questions, and training reflections captured for this project.
 
-## Automation Scripts
-
-The `scripts/` directory includes a helper script for creating GitHub issues via the API. Set `GITHUB_TOKEN` in your environment before running it.
-
 ## Future Enhancements
 
 Potential features to add:
